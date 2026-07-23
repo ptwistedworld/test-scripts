@@ -1,0 +1,41 @@
+id: web-recon
+version: "1.0"
+name: Web Application Reconnaissance
+source: purple-team
+domain: web
+tags: [recon, web, discovery]
+description: Comprehensive web application reconnaissance playbook for initial assessment.
+
+prerequisites:
+  signals_any:
+    - web_application
+  tech_any:
+    - http
+    - https
+
+chain:
+  - id: port_scan
+    module: scanner/port/tcp_scan
+    description: Scan for open web ports
+    options:
+      PORTS: "80,443,8080,8443,8000,8081"
+  
+  - id: http_enum
+    module: scanner/http/enum
+    description: Enumerate web directories and files
+  
+  - id: tech_detect
+    module: scanner/http/tech_detect
+    description: Detect web technologies and frameworks
+  
+  - id: vuln_scan
+    module: scanner/http/vuln_scan
+    description: Automated vulnerability scanning
+
+blockers:
+  - WAF blocking automated scans
+  - Rate limiting
+
+references:
+  - "OWASP Testing Guide v4"
+  - "PTES Technical Guidelines"

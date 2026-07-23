@@ -1,0 +1,45 @@
+id: ad-assessment
+version: "1.0"
+name: Active Directory Security Assessment
+source: purple-team
+domain: active-directory
+tags: [ad, windows, assessment, kerberos]
+description: Comprehensive Active Directory security assessment playbook.
+
+prerequisites:
+  signals_any:
+    - active_directory
+  tech_any:
+    - ldap
+    - kerberos
+    - smb
+
+chain:
+  - id: ldap_enum
+    module: scanner/ldap/enum
+    description: LDAP enumeration for AD information
+  
+  - id: smb_scan
+    module: scanner/smb/scan
+    description: SMB share scanning and enumeration
+  
+  - id: dns_enum
+    module: scanner/dns/enum
+    description: DNS enumeration for domain hosts
+  
+  - id: kerberoast
+    module: auxiliary/kerberos/kerberoast
+    description: Kerberoasting attack to extract service account hashes
+  
+  - id: asrep_roast
+    module: auxiliary/kerberos/asrep_roast
+    description: AS-REP Roasting for users without pre-auth
+
+blockers:
+  - Network segmentation
+  - Account lockout policies
+  - Protected Users group
+
+references:
+  - "MITRE ATT&CK - T1558.003"
+  - "HarmJ0y - Kerberoasting"
